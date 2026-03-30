@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <rect x="0" y="0" width="180" height="180" fill="#FF6B35" rx="20"/>
+  <rect x="20" y="60" width="140" height="60" fill="#FFD060" rx="10"/>
+  <circle cx="90" cy="40" r="25" fill="#00FF88"/>
+  <text x="90" y="48" text-anchor="middle" font-size="30" fill="#07071a" font-family="Arial">🏗️</text>
+  <text x="90" y="130" text-anchor="middle" font-size="16" fill="#F0EEE8" font-family="Arial" font-weight="bold">Thekedaar</text>
+  <text x="90" y="150" text-anchor="middle" font-size="12" fill="#F0EEE8" font-family="Arial">Panel</text>
+</svg>

@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="theme-color" content="#FF6B35">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Responsive contractor register for attendance, payments, and worker tracking on mobile and desktop.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Thekedaar Panel">
+<link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icons/favicon.svg') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/app-icon.svg') }}">
+<title>🏗️ Moharsingh constructor </title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════
+   CSS VARIABLES
+════════════════════════════════ */
+:root {
+  --bg:        #07071a;
+  --bg2:       #0d0d24;
+  --card:      rgba(255,255,255,0.038);
+  --card2:     rgba(255,255,255,0.065);
+  --border:    rgba(255,107,53,0.20);
+  --borderH:   rgba(255,107,53,0.65);
+  --orange:    #FF6B35;
+  --orange2:   #E8521A;
+  --gold:      #FFD060;
+  --green:     #00FF88;
+  --red:       #FF3366;
+  --amber:     #FFB800;
+  --blue:      #00D4FF;
+  --purple:    #A855F7;
+  --text:      #F0EEE8;
+  --muted:     rgba(240,238,232,0.42);
+  --radius:    14px;
+  --shadow:    0 8px 32px rgba(0,0,0,0.55);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth }
+body { font-family:'Nunito',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden }
+a { color:inherit; text-decoration:none }
+button { font-family:'Nunito',sans-serif }
+
+/* ════════ CANVAS BG ════════ */
+#bg { position:fixed; inset:0; z-index:0; pointer-events:none }
+.mesh { position:fixed; inset:0; z-index:1; pointer-events:none;
+  background: radial-gradient(ellipse 70% 45% at 12% 18%, rgba(255,107,53,.07) 0%, transparent 60%),
+              radial-gradient(ellipse 55% 40% at 88% 80%, rgba(0,212,255,.05) 0%, transparent 60%) }
+
+/* ════════ LAYOUT ════════ */
+.app { position:relative; z-index:10; min-height:100vh; padding-bottom:90px }
+
+/* ════════ HEADER ════════ */
+.hdr {
+  position:sticky; top:0; z-index:200;
+  backdrop-filter:blur(28px) saturate(160%);
+  background:rgba(7,7,26,.90);
+  border-bottom:1px solid var(--border);
+  padding:0 20px; height:62px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+}
+.brand { display:flex; align-items:center; gap:10px; flex-shrink:0 }
+.brand-ico {
+  width:38px; height:38px; border-radius:10px; flex-shrink:0;
+  background:linear-gradient(135deg,var(--orange),var(--gold));
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+  box-shadow:0 0 18px rgba(255,107,53,.55); animation:pulse 3s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{box-shadow:0 0 18px rgba(255,107,53,.5)} 50%{box-shadow:0 0 36px rgba(255,107,53,.9)} }
+.brand-name { font-family:'Rajdhani',sans-serif; font-weight:700; font-size:17px; letter-spacing:1.5px;
+  background:linear-gradient(90deg,var(--orange),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text }
+.brand-sub  { font-size:9px; color:var(--muted); letter-spacing:2.5px; text-transform:uppercase; line-height:1 }
+
+.hdr-right { display:flex; align-items:center; gap:7px }
+
+/* month-year pill */
+.my-pill { display:flex; align-items:center; gap:6px; background:var(--card2); border:1px solid var(--border);
+  border-radius:40px; padding:5px 13px; cursor:pointer; transition:border-color .25s }
+.my-pill:hover { border-color:var(--borderH) }
+.my-pill select { background:transparent; border:none; color:var(--text); font-family:'Nunito',sans-serif;
+  font-size:13px; font-weight:700; outline:none; cursor:pointer; -webkit-background-composite:none }
+.my-pill select option { background:#1a1a30; color:var(--text) }
+
+/* search */
+.srch { position:relative }
+.srch input { background:var(--card2); border:1px solid var(--border); border-radius:40px;
+  padding:7px 14px 7px 32px; color:var(--text); font-size:13px; width:180px;
+  outline:none; transition:all .3s }
+.srch input:focus { border-color:var(--orange); width:220px; box-shadow:0 0 0 3px rgba(255,107,53,.1) }
+.srch input::placeholder { color:var(--muted) }
+.srch-ico { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:12px; pointer-events:none }
+
+.ico-btn { width:35px; height:35px; border-radius:9px; border:1px solid var(--border); background:var(--card2);
+  color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer;
+  transition:all .25s; font-size:14px }
+.ico-btn:hover { border-color:var(--orange); color:var(--orange); background:rgba(255,107,53,.1); transform:translateY(-2px) }
+
+/* ════════ MAIN ════════ */
+.main { padding:22px 18px; max-width:1750px; margin:0 auto }
+
+/* ════════ HERO ════════ */
+.hero { position:relative; padding:22px 26px; border-radius:var(--radius); background:var(--card);
+  border:1px solid var(--border); margin-bottom:20px; overflow:hidden }
+.hero::before { content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,transparent,var(--orange),var(--gold),var(--orange),transparent);
+  background-size:200% 100%; animation:slide 3s linear infinite }
+@keyframes slide { 0%{background-position:200% center} 100%{background-position:-200% center} }
+.hero::after { content:'📋'; position:absolute; right:24px; top:50%; transform:translateY(-50%);
+  font-size:68px; opacity:.055; pointer-events:none }
+.crumb { font-size:10px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; margin-bottom:5px }
+.crumb span { color:var(--orange) }
+.hero h1 { font-family:'Rajdhani',sans-serif; font-size:clamp(20px,3.5vw,34px); font-weight:700; letter-spacing:2px;
+  background:linear-gradient(135deg,var(--text) 0%,var(--gold) 55%,var(--orange) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1.1; margin-bottom:5px }
+.hero p { font-size:12px; color:var(--muted); line-height:1.5 }
+
+/* active months bar */
+.months-bar { display:flex; gap:7px; flex-wrap:wrap; margin-top:12px }
+.month-chip { font-size:11px; font-weight:700; padding:3px 11px; border-radius:20px;
+  background:rgba(255,107,53,.12); border:1px solid rgba(255,107,53,.25); color:var(--orange);
+  cursor:pointer; transition:all .2s; letter-spacing:.5px }
+.month-chip:hover, .month-chip.active { background:var(--orange); color:#fff; border-color:var(--orange) }
+
+/* ════════ STATS ════════ */
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(148px,1fr)); gap:11px; margin-bottom:20px }
+.stat { position:relative; background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:16px 16px 14px; overflow:hidden; transition:all .3s cubic-bezier(.175,.885,.32,1.275); cursor:default }
+.stat:hover { transform:translateY(-5px); border-color:var(--orange); box-shadow:0 0 24px rgba(255,107,53,.2) }
+.stat-ico { width:34px; height:34px; border-radius:9px; display:flex; align-items:center;
+  justify-content:center; font-size:15px; margin-bottom:9px }
+.s0 .stat-ico{background:rgba(255,107,53,.15)} .s1 .stat-ico{background:rgba(0,255,136,.12)}
+.s2 .stat-ico{background:rgba(255,208,96,.12)} .s3 .stat-ico{background:rgba(0,212,255,.12)}
+.s4 .stat-ico{background:rgba(255,51,102,.12)}  .s5 .stat-ico{background:rgba(168,85,247,.12)}
+.stat-val { font-family:'Rajdhani',sans-serif; font-size:26px; font-weight:700; line-height:1; margin-bottom:3px }
+.s0 .stat-val{color:var(--orange)} .s1 .stat-val{color:var(--green)} .s2 .stat-val{color:var(--gold)}
+.s3 .stat-val{color:var(--blue)}   .s4 .stat-val{color:var(--red)}   .s5 .stat-val{color:var(--purple)}
+.stat-lbl { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:1px }
+@keyframes glowPulse { 0%,100%{text-shadow:0 0 5px currentColor} 50%{text-shadow:0 0 18px currentColor,0 0 35px currentColor} }
+.glow { animation:glowPulse 3s ease-in-out infinite }
+
+/* ════════ LEGEND ════════ */
+.legend { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:12px; align-items:center }
+.leg { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--muted) }
+.ld { width:24px; height:17px; border-radius:4px; display:flex; align-items:center;
+  justify-content:center; font-size:8px; font-weight:800; letter-spacing:.3px }
+.ld-P  { background:rgba(0,255,136,.18); color:var(--green); border:1px solid rgba(0,255,136,.4) }
+.ld-A  { background:rgba(255,51,102,.18); color:var(--red);  border:1px solid rgba(255,51,102,.4) }
+.ld-H  { background:rgba(255,184,0,.18);  color:var(--amber);border:1px solid rgba(255,184,0,.4) }
+.ld-HD { background:rgba(0,212,255,.18);  color:var(--blue); border:1px solid rgba(0,212,255,.4) }
+.leg-tip { margin-left:auto; font-size:10px; color:var(--muted); font-style:italic }
+
+/* ════════ TABLE SECTION ════════ */
+.tbl-wrap { background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+  overflow:hidden; margin-bottom:22px; position:relative }
+.tbl-wrap::before { content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--orange),var(--gold),var(--orange),transparent) }
+
+.tbl-bar { display:flex; align-items:center; justify-content:space-between; padding:13px 16px;
+  border-bottom:1px solid var(--border); flex-wrap:wrap; gap:8px }
+.tbl-title { font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px;
+  display:flex; align-items:center; gap:8px }
+.badge { background:rgba(255,107,53,.2); color:var(--orange); border:1px solid rgba(255,107,53,.3);
+  border-radius:20px; padding:1px 9px; font-size:10px; font-weight:700 }
+.tbl-btns { display:flex; gap:6px }
+
+/* ════════ BUTTONS ════════ */
+.btn { display:inline-flex; align-items:center; gap:5px; padding:7px 14px; border-radius:8px;
+  font-size:12px; font-weight:700; cursor:pointer; transition:all .25s; border:1px solid transparent;
+  letter-spacing:.3px; white-space:nowrap }
+.btn-primary { background:linear-gradient(135deg,var(--orange),var(--orange2)); color:#fff;
+  box-shadow:0 4px 14px rgba(255,107,53,.35) }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 22px rgba(255,107,53,.55) }
+.btn-ghost { background:transparent; border-color:var(--border); color:var(--muted) }
+.btn-ghost:hover { border-color:var(--orange); color:var(--orange); background:rgba(255,107,53,.07) }
+.btn-blue  { background:rgba(0,212,255,.1); border-color:rgba(0,212,255,.3); color:var(--blue) }
+.btn-blue:hover  { background:rgba(0,212,255,.2); border-color:var(--blue) }
+.btn-green { background:rgba(0,255,136,.1); border-color:rgba(0,255,136,.25); color:var(--green) }
+.btn-green:hover { background:rgba(0,255,136,.2); border-color:var(--green) }
+.btn-red   { background:rgba(255,51,102,.1); border-color:rgba(255,51,102,.25); color:var(--red) }
+.btn-red:hover   { background:rgba(255,51,102,.2); border-color:var(--red) }
+.btn-sm { padding:4px 9px; font-size:10px; border-radius:6px }
+
+/* ════════ TABLE SCROLL ════════ */
+.tbl-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch }
+.tbl-scroll::-webkit-scrollbar { height:4px }
+.tbl-scroll::-webkit-scrollbar-thumb { background:var(--orange); border-radius:2px }
+.tbl-scroll::-webkit-scrollbar-track { background:rgba(255,255,255,.02) }
+
+/* ════════ REGISTER TABLE ════════ */
+table.reg { width:100%; border-collapse:collapse; min-width:1300px }
+.reg thead tr { background:rgba(255,107,53,.07) }
+.reg th { padding:8px 5px; font-family:'Rajdhani',sans-serif; font-size:10px; font-weight:700;
+  text-transform:uppercase; letter-spacing:1px; color:var(--orange); text-align:center;
+  border-bottom:1px solid var(--border); white-space:nowrap }
+.reg th.th-name { text-align:left; min-width:155px }
+.reg th.th-day  { width:27px; min-width:27px; padding:8px 2px }
+.reg th.th-sun  { color:rgba(255,107,53,.30) }
+
+/* sticky */
+.stk, .reg th.stk { position:sticky; z-index:4; background:#0d0d24 }
+.stk-0 { left:0; min-width:40px; width:40px }
+.stk-1 { left:40px; box-shadow:4px 0 14px rgba(0,0,0,.55) }
+.reg tbody tr:hover td.stk { background:#12122e }
+
+.reg tbody tr { border-bottom:1px solid rgba(255,255,255,.035); transition:background .15s }
+.reg tbody tr:hover { background:rgba(255,107,53,.038) }
+.reg td { padding:0; text-align:center; vertical-align:middle; height:50px }
+.td-sno { font-family:'Space Mono',monospace; font-size:10px; color:var(--muted); padding:0 5px }
+
+/* worker cell */
+.wc { display:flex; align-items:center; gap:9px; padding:6px 10px; text-align:left }
+.av { width:32px; height:32px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:12px; color:#fff }
+.av-m { background:linear-gradient(135deg,#7C3AED,#A855F7); box-shadow:0 0 8px rgba(124,58,237,.35) }
+.av-l { background:linear-gradient(135deg,#059669,#10B981); box-shadow:0 0 8px rgba(5,150,105,.35) }
+.wname { font-size:13px; font-weight:700; color:var(--text); white-space:nowrap; overflow:hidden;
+  text-overflow:ellipsis; max-width:110px }
+.wtag { display:inline-block; font-size:8px; font-weight:800; padding:1px 5px; border-radius:3px;
+  letter-spacing:1px; text-transform:uppercase; margin-top:2px }
+.tag-m { background:rgba(168,85,247,.2); color:#C084FC; border:1px solid rgba(168,85,247,.3) }
+.tag-l { background:rgba(16,185,129,.2); color:#34D399; border:1px solid rgba(16,185,129,.3) }
+
+/* day cell */
+.dc { width:25px; height:25px; border-radius:5px; display:flex; align-items:center;
+  justify-content:center; margin:0 auto; cursor:pointer; font-size:8px; font-weight:800;
+  transition:all .17s cubic-bezier(.175,.885,.32,1.275); user-select:none; position:relative }
+.dc:hover { transform:scale(1.3); z-index:10 }
+.dc.sun { opacity:.38 }
+.dc.s-0  { background:rgba(255,255,255,.045); color:transparent; border:1px dashed rgba(255,255,255,.07) }
+.dc.s-0:hover  { color:var(--muted); background:rgba(255,255,255,.08) }
+.dc.s-P  { background:rgba(0,255,136,.14); color:var(--green); border:1px solid rgba(0,255,136,.35); box-shadow:0 0 6px rgba(0,255,136,.2) }
+.dc.s-A  { background:rgba(255,51,102,.14); color:var(--red);  border:1px solid rgba(255,51,102,.35); box-shadow:0 0 6px rgba(255,51,102,.2) }
+.dc.s-H  { background:rgba(255,184,0,.14);  color:var(--amber);border:1px solid rgba(255,184,0,.35); box-shadow:0 0 6px rgba(255,184,0,.2) }
+.dc.s-HD { background:rgba(0,212,255,.14);  color:var(--blue); border:1px solid rgba(0,212,255,.35); box-shadow:0 0 6px rgba(0,212,255,.2) }
+/* tooltip */
+.dc::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 5px); left:50%;
+  transform:translateX(-50%); background:#1e1e3a; color:var(--text); font-size:9px; padding:3px 7px;
+  border-radius:4px; white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .15s;
+  border:1px solid var(--border); z-index:30 }
+.dc:hover::after { opacity:1 }
+
+/* money cells */
+.td-rate    { font-family:'Space Mono',monospace; font-size:11px; color:var(--gold); padding:0 7px }
+.td-total   { font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; color:var(--green); padding:0 6px }
+.td-monthly { font-family:'Space Mono',monospace; font-size:11px; color:var(--gold); padding:0 7px }
+.td-extra   { padding:0 5px }
+.td-current { padding:0 7px }
+.extra-inner { display:flex; flex-direction:column; align-items:center; gap:2px }
+.extra-amt   { font-family:'Space Mono',monospace; font-size:10px; color:var(--blue); font-weight:700 }
+.curr-inner  { display:flex; flex-direction:column; align-items:center }
+.curr-amt    { font-family:'Rajdhani',sans-serif; font-size:14px; font-weight:700; color:var(--orange) }
+.curr-sub    { font-size:9px; color:var(--muted) }
+.td-balance  { padding:0 7px }
+.bal-pos     { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; color:var(--red) }
+.bal-zero    { font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:700; color:var(--green) }
+
+/* action cell */
+.act-cell { display:flex; justify-content:center; gap:4px; padding:0 5px }
+.act-btn { width:26px; height:26px; border-radius:7px; border:1px solid var(--border);
+  background:var(--card2); color:var(--muted); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:11px; transition:all .18s }
+.act-btn:hover     { border-color:var(--orange); color:var(--orange); background:rgba(255,107,53,.09) }
+.act-btn.del:hover { border-color:var(--red); color:var(--red); background:rgba(255,51,102,.09) }
+
+/* tfoot */
+.reg tfoot tr { background:rgba(255,107,53,.055); border-top:1px solid var(--border) }
+.reg tfoot td { padding:10px 5px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:12px;
+  color:var(--gold); text-align:center }
+.reg tfoot td.tf-lbl { text-align:left; padding-left:9px; color:var(--muted); font-size:9px;
+  letter-spacing:1px; text-transform:uppercase }
+
+/* empty / loading */
+.special-row td { text-align:center; padding:52px 20px; color:var(--muted); font-size:13px }
+.spinner { width:34px; height:34px; border:3px solid rgba(255,107,53,.18); border-top-color:var(--orange);
+  border-radius:50%; animation:spin .65s linear infinite; margin:0 auto 10px }
+@keyframes spin { to { transform:rotate(360deg) } }
+
+/* ════════ MODAL ════════ */
+.overlay { position:fixed; inset:0; background:rgba(0,0,0,.78); backdrop-filter:blur(10px);
+  z-index:1000; display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .28s }
+.overlay.open { opacity:1; pointer-events:all }
+.modal { background:#0e0e26; border:1px solid var(--border); border-radius:20px;
+  width:min(500px,95vw); max-height:92vh; overflow-y:auto;
+  transform:translateY(24px) scale(.97);
+  transition:transform .3s cubic-bezier(.175,.885,.32,1.275);
+  box-shadow:0 28px 70px rgba(0,0,0,.7), 0 0 0 1px rgba(255,107,53,.12) }
+.overlay.open .modal { transform:translateY(0) scale(1) }
+.modal-hdr { padding:20px 22px 0; display:flex; justify-content:space-between; align-items:center }
+.modal-title { font-family:'Rajdhani',sans-serif; font-size:21px; font-weight:700; letter-spacing:1px;
+  background:linear-gradient(90deg,var(--text),var(--gold)); -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent; background-clip:text }
+.modal-x { width:29px; height:29px; border-radius:7px; border:1px solid var(--border);
+  background:transparent; color:var(--muted); cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center; transition:all .2s }
+.modal-x:hover { border-color:var(--red); color:var(--red) }
+.modal-body { padding:18px 22px 20px; display:flex; flex-direction:column; gap:12px }
+.fg { display:flex; flex-direction:column; gap:5px }
+.fg label { font-size:10px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:1px }
+.inp { background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:9px;
+  padding:9px 13px; color:var(--text); font-family:'Nunito',sans-serif; font-size:13px;
+  outline:none; transition:all .25s; width:100% }
+.inp:focus { border-color:var(--orange); background:rgba(255,107,53,.045);
+  box-shadow:0 0 0 3px rgba(255,107,53,.1) }
+.inp::placeholder { color:var(--muted) }
+select.inp { cursor:pointer }
+select.inp option { background:#1a1a2e; color:var(--text) }
+.fr { display:grid; grid-template-columns:1fr 1fr; gap:10px }
+.modal-foot { display:flex; gap:8px; justify-content:flex-end; padding:0 22px 22px }
+.btn-cancel { background:transparent; border:1px solid var(--border); color:var(--muted);
+  border-radius:9px; padding:9px 17px; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s }
+.btn-cancel:hover { border-color:var(--red); color:var(--red) }
+.btn-save { background:linear-gradient(135deg,var(--orange),var(--orange2)); border:none; color:#fff;
+  border-radius:9px; padding:9px 22px; font-size:13px; font-weight:800; cursor:pointer;
+  transition:all .25s; box-shadow:0 4px 14px rgba(255,107,53,.35) }
+.btn-save:hover { transform:translateY(-2px); box-shadow:0 6px 22px rgba(255,107,53,.55) }
+
+/* error text */
+.err-msg { font-size:11px; color:var(--red); font-weight:600; min-height:14px }
+
+/* ════════ EXTRA MONEY MODAL ════════ */
+.ee-list { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px }
+.ee-card { background:rgba(0,212,255,.055); border:1px solid rgba(0,212,255,.14); border-radius:10px;
+  padding:11px 12px; min-width:165px; position:relative }
+.ee-mo  { font-size:9px; color:var(--blue); font-weight:800; letter-spacing:1px; text-transform:uppercase; margin-bottom:3px }
+.ee-am  { font-family:'Space Mono',monospace; font-size:15px; font-weight:700; color:var(--text); margin-bottom:2px }
+.ee-note{ font-size:10px; color:var(--muted) }
+.ee-del { position:absolute; top:5px; right:5px; background:transparent; border:none;
+  color:rgba(255,51,102,.38); cursor:pointer; font-size:12px; transition:color .18s; padding:2px }
+.ee-del:hover { color:var(--red) }
+.ee-add-form { display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:6px;
+  padding-top:12px; border-top:1px solid var(--border) }
+.ee-inp { background:rgba(255,255,255,.05); border:1px solid rgba(0,212,255,.2); border-radius:8px;
+  padding:7px 10px; color:var(--text); font-family:'Nunito',sans-serif; font-size:12px; outline:none; transition:border-color .2s }
+.ee-inp:focus { border-color:var(--blue) }
+.ee-inp::placeholder { color:var(--muted) }
+.ee-inp.w-mo { width:95px } .ee-inp.w-am { width:90px } .ee-inp.w-no { width:175px }
+.btn-ee { background:rgba(0,212,255,.12); border:1px solid rgba(0,212,255,.3); border-radius:8px;
+  color:var(--blue); font-size:11px; font-weight:800; padding:7px 12px; cursor:pointer; transition:all .2s }
+.btn-ee:hover { background:rgba(0,212,255,.22); border-color:var(--blue) }
+
+/* ════════ PAYMENT MODAL ════════ */
+.pay-list { display:flex; flex-direction:column; gap:7px; margin-bottom:12px; max-height:200px; overflow-y:auto }
+.pay-item { background:rgba(0,255,136,.05); border:1px solid rgba(0,255,136,.13); border-radius:9px;
+  padding:10px 12px; display:flex; justify-content:space-between; align-items:center }
+.pay-info .pay-type { font-size:10px; color:var(--green); font-weight:800; text-transform:uppercase; letter-spacing:1px }
+.pay-info .pay-note { font-size:11px; color:var(--muted) }
+.pay-info .pay-date { font-size:10px; color:var(--muted) }
+.pay-amount { font-family:'Rajdhani',sans-serif; font-size:17px; font-weight:700; color:var(--green) }
+
+/* ════════ FAB ════════ */
+.fab { position:fixed; bottom:26px; right:26px; z-index:300;
+  display:flex; flex-direction:column; align-items:flex-end; gap:7px }
+.fab-btn { width:54px; height:54px; border-radius:16px;
+  background:linear-gradient(135deg,var(--orange),var(--orange2));
+  border:none; color:#fff; font-size:24px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:0 8px 26px rgba(255,107,53,.52);
+  transition:all .3s cubic-bezier(.175,.885,.32,1.275) }
+.fab-btn:hover { transform:scale(1.1) rotate(45deg) }
+.fab-lbl { font-size:11px; font-weight:700; background:rgba(255,107,53,.92); color:#fff;
+  padding:5px 11px; border-radius:7px; opacity:0; transform:translateX(10px);
+  transition:all .28s; pointer-events:none; white-space:nowrap }
+.fab:hover .fab-lbl { opacity:1; transform:translateX(0) }
+
+/* ════════ TOASTS ════════ */
+.toasts { position:fixed; bottom:92px; right:26px; z-index:999;
+  display:flex; flex-direction:column; gap:7px; pointer-events:none }
+.toast { background:#191930; border:1px solid var(--border); border-radius:11px;
+  padding:10px 14px; font-size:12px; font-weight:700; display:flex; align-items:center;
+  gap:8px; min-width:205px; max-width:280px;
+  transform:translateX(120%); transition:transform .32s cubic-bezier(.175,.885,.32,1.275);
+  box-shadow:0 7px 22px rgba(0,0,0,.5) }
+.toast.show { transform:translateX(0) }
+.toast.ok   { border-color:rgba(0,255,136,.28) }    .toast.ok   .ti{ color:var(--green) }
+.toast.info { border-color:rgba(0,212,255,.28) }    .toast.info .ti{ color:var(--blue) }
+.toast.warn { border-color:rgba(255,184,0,.28) }    .toast.warn .ti{ color:var(--amber) }
+.toast.err  { border-color:rgba(255,51,102,.28) }   .toast.err  .ti{ color:var(--red) }
+
+/* ════════ SCROLLBAR ════════ */
+::-webkit-scrollbar { width:5px; height:5px }
+::-webkit-scrollbar-thumb { background:rgba(255,107,53,.4); border-radius:3px }
+::-webkit-scrollbar-thumb:hover { background:var(--orange) }
+::-webkit-scrollbar-track { background:rgba(255,255,255,.02) }
+
+/* ════════ ANIMATIONS ════════ */
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+.fu { animation:fadeUp .45s ease both }
+.d1{animation-delay:.06s} .d2{animation-delay:.12s} .d3{animation-delay:.18s}
+.d4{animation-delay:.24s} .d5{animation-delay:.30s} .d6{animation-delay:.36s}
+
+.register-views { display:flex; flex-direction:column }
+.desktop-register { display:block }
+.mobile-register { display:none; padding:18px }
+.mobile-note, .mobile-state {
+  border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.04);
+  color:var(--muted);
+  border-radius:16px;
+  padding:14px 16px;
+  font-size:13px;
+  line-height:1.6;
+}
+.mobile-list { display:grid; gap:14px }
+.worker-card {
+  position:relative; overflow:hidden; border-radius:18px;
+  border:1px solid rgba(255,255,255,.07); background:rgba(255,255,255,.04);
+  padding:16px; display:grid; gap:14px;
+}
+.worker-card::before {
+  content:''; position:absolute; left:0; right:0; top:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,107,53,.75),transparent);
+}
+.worker-head { display:flex; align-items:flex-start; justify-content:space-between; gap:12px }
+.worker-main { display:flex; align-items:center; gap:12px; min-width:0 }
+.worker-copy { min-width:0 }
+.worker-name-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:5px }
+.worker-name-row h3 { font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700; letter-spacing:.6px }
+.worker-meta { display:flex; gap:12px; flex-wrap:wrap; color:var(--muted); font-size:12px }
+.worker-meta strong { color:var(--gold); font-weight:800 }
+.mobile-metrics { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px }
+.metric-chip {
+  border-radius:14px; border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.035); padding:10px 12px;
+}
+.metric-chip span {
+  display:block; font-size:10px; font-weight:800; letter-spacing:1px;
+  text-transform:uppercase; color:var(--muted); margin-bottom:4px;
+}
+.metric-chip strong { display:block; font-family:'Rajdhani',sans-serif; font-size:22px; line-height:1 }
+.card-actions { display:flex; flex-wrap:wrap; gap:8px }
+.card-actions .btn { flex:1 1 140px; justify-content:center }
+.att-card {
+  border-radius:16px; border:1px solid rgba(255,255,255,.06);
+  background:rgba(255,255,255,.03); padding:12px;
+}
+.att-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:10px }
+.att-card-title { font-size:12px; font-weight:800; letter-spacing:1px; text-transform:uppercase }
+.att-card-tip { font-size:11px; color:var(--muted); text-align:right }
+.att-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px }
+.mday {
+  width:100%; min-height:54px; padding:7px 5px; border-radius:12px;
+  border:1px dashed rgba(255,255,255,.09); background:rgba(255,255,255,.045);
+  cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+  transition:transform .16s, background .16s, border-color .16s, color .16s;
+}
+.mday:hover { transform:translateY(-2px) }
+.mday.sun { opacity:.82 }
+.mday-num { font-size:11px; font-weight:800; color:var(--text) }
+.mday-status { font-size:12px; font-weight:900; letter-spacing:.3px; min-height:16px }
+.mday.s-0 { border-style:dashed }
+.mday.s-P { background:rgba(0,255,136,.14); border-color:rgba(0,255,136,.34); color:var(--green) }
+.mday.s-A { background:rgba(255,51,102,.14); border-color:rgba(255,51,102,.34); color:var(--red) }
+.mday.s-H { background:rgba(255,184,0,.14); border-color:rgba(255,184,0,.34); color:var(--amber) }
+.mday.s-HD { background:rgba(0,212,255,.14); border-color:rgba(0,212,255,.34); color:var(--blue) }
+.wmeta { font-size:10px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.fab-plus { line-height:1 }
+.fab-btn-text { display:none; font-size:14px; font-weight:800; letter-spacing:.4px }
+
+/* ════════ RESPONSIVE ════════ */
+@media(max-width:768px) {
+  .hdr { padding:0 12px }
+  .srch input { width:110px }
+  .srch input:focus { width:150px }
+  .main { padding:14px 10px }
+  .stats { grid-template-columns:repeat(2,1fr) }
+  .fab { bottom:14px; right:14px }
+  .brand-sub { display:none }
+  .fr { grid-template-columns:1fr }
+}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="mesh"></div>
+<div class="app">
+
+<!-- ═══════ HEADER ═══════ -->
+<header class="hdr">
+  <div class="brand">
+    <div class="brand-ico">🏗️</div>
+    <div>
+      <div class="brand-name">THEKEDAAR PANEL</div>
+      <div class="brand-sub">Contractor Register</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="srch">
+      <span class="srch-ico">🔍</span>
+      <input id="srchInput" type="text" placeholder="Worker search…">
+    </div>
+    <div class="my-pill">
+      <span>📅</span>
+      <select id="selMonth">
+        <option value="01">January</option><option value="02">February</option>
+        <option value="03">March</option><option value="04">April</option>
+        <option value="05">May</option><option value="06">June</option>
+        <option value="07">July</option><option value="08">August</option>
+        <option value="09">September</option><option value="10">October</option>
+        <option value="11">November</option><option value="12">December</option>
+      </select>
+      <select id="selYear" style="margin-left:4px">
+        <option>2026</option><option>2027</option><option>2028</option><option>2029</option>
+      </select>
+    </div>
+    <button class="ico-btn" title="Export CSV" onclick="exportCSV()">📥</button>
+    <button class="ico-btn" title="Refresh"    onclick="loadAll(true)">🔄</button>
+  </div>
+</header>
+
+<!-- ═══════ MAIN ═══════ -->
+<main class="main">
+
+  <!-- Hero -->
+  <div class="hero fu">
+    <div class="crumb">Dashboard / <span>Contractor Register</span></div>
+    <h1>CONTRACTOR REGISTER TABLE</h1>
+    <p>
+      Mistri aur Labour ki daily attendance aur poori payment — real data, permanent save.<br>
+      Kisi bhi mahine ka data dekho: neeche month chip click karo 👇
+    </p>
+    <div class="months-bar" id="monthsBar">
+      <span style="font-size:11px;color:var(--muted);padding:3px 0">Loading months…</span>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat s0 fu d1"><div class="stat-ico">👷</div><div class="stat-val glow" id="st-w">—</div><div class="stat-lbl">Total Workers</div></div>
+    <div class="stat s1 fu d2"><div class="stat-ico">✅</div><div class="stat-val glow" id="st-p">—</div><div class="stat-lbl">Present Today</div></div>
+    <div class="stat s2 fu d3"><div class="stat-ico">💰</div><div class="stat-val glow" id="st-m">—</div><div class="stat-lbl">Monthly Pay</div></div>
+    <div class="stat s3 fu d4"><div class="stat-ico">⚡</div><div class="stat-val glow" id="st-e">—</div><div class="stat-lbl">Extra Money</div></div>
+    <div class="stat s4 fu d5"><div class="stat-ico">💸</div><div class="stat-val glow" id="st-b">—</div><div class="stat-lbl">Balance Due</div></div>
+    <div class="stat s5 fu d6"><div class="stat-ico">📊</div><div class="stat-val glow" id="st-t">—</div><div class="stat-lbl">Total Payable</div></div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend fu">
+    <div class="leg"><div class="ld ld-P">P</div> Present</div>
+    <div class="leg"><div class="ld ld-A">A</div> Absent</div>
+    <div class="leg"><div class="ld ld-H">H</div> Half Day</div>
+    <div class="leg"><div class="ld ld-HD">HD</div> Holiday</div>
+    <div class="leg-tip">👆 Day cell click karo — P → A → H → HD → clear</div>
+  </div>
+
+  <!-- Table -->
+  <div class="tbl-wrap fu">
+    <div class="tbl-bar">
+      <div class="tbl-title">
+        📋 Attendance + Payment Register
+        <span class="badge" id="wBadge">loading…</span>
+      </div>
+      <div class="tbl-btns">
+        <button class="btn btn-ghost" onclick="exportCSV()">📥 CSV</button>
+        <button class="btn btn-primary" onclick="openAddWorkerModal()">＋ Add Worker</button>
+      </div>
+    </div>
+    <div class="register-views">
+      <div class="desktop-register tbl-scroll">
+        <table class="reg" id="regTable">
+          <thead><tr id="theadRow"></tr></thead>
+          <tbody id="tbody"></tbody>
+          <tfoot><tr id="tfootRow"></tr></tfoot>
+        </table>
+      </div>
+      <div class="mobile-register" id="mobileRegister"></div>
+    </div>
+  </div>
+
+</main>
+</div><!-- end .app -->
+
+<!-- ═══════ FAB ═══════ -->
+<div class="fab">
+  <span class="fab-lbl">Add Worker</span>
+  <button class="fab-btn" onclick="openAddWorkerModal()">＋</button>
+</div>
+<div class="toasts" id="toastsWrap"></div>
+
+<!-- ═══════ WORKER MODAL ═══════ -->
+<div class="overlay" id="modalWorker">
+<div class="modal">
+  <div class="modal-hdr">
+    <div class="modal-title" id="mwTitle">Add New Worker</div>
+    <button class="modal-x" onclick="closeModal('modalWorker')">✕</button>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" id="mw-id">
+    <div class="fr">
+      <div class="fg"><label>Full Name *</label><input class="inp" id="mw-name" placeholder="e.g. Ramesh Kumar"></div>
+      <div class="fg"><label>Mobile Number *</label><input class="inp" id="mw-mob" type="tel" placeholder="98XXXXXXXX"></div>
+    </div>
+    <div class="fr">
+      <div class="fg">
+        <label>Role *</label>
+        <select class="inp" id="mw-role">
+          <option value="labour">🧱 Labour</option>
+          <option value="mistri">👷 Mistri (Supervisor)</option>
+        </select>
+      </div>
+      <div class="fg"><label>Daily Rate (₹) *</label><input class="inp" id="mw-rate" type="number" placeholder="e.g. 600" min="1"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>Joining Date</label><input class="inp" id="mw-jdate" type="date"></div>
+      <div class="fg"><label>Aadhar Number</label><input class="inp" id="mw-aadhar" placeholder="Optional"></div>
+    </div>
+    <div class="fg"><label>Address / Site</label><input class="inp" id="mw-addr" placeholder="Optional"></div>
+    <div class="err-msg" id="mw-err"></div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn-cancel" onclick="closeModal('modalWorker')">Cancel</button>
+    <button class="btn-save" id="mw-save-btn" onclick="saveWorker()">✔ Save Worker</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ EXTRA MONEY MODAL ═══════ -->
+<div class="overlay" id="modalExtra">
+<div class="modal">
+  <div class="modal-hdr">
+    <div class="modal-title" id="meTitle">Extra Money</div>
+    <button class="modal-x" onclick="closeModal('modalExtra')">✕</button>
+  </div>
+  <div class="modal-body" id="meBody"></div>
+  <div class="modal-foot">
+    <button class="btn-cancel" onclick="closeModal('modalExtra')">Close</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════ PAYMENT MODAL ═══════ -->
+<div class="overlay" id="modalPay">
+<div class="modal">
+  <div class="modal-hdr">
+    <div class="modal-title" id="mpTitle">Payment Daalo</div>
+    <button class="modal-x" onclick="closeModal('modalPay')">✕</button>
+  </div>
+  <div class="modal-body">
+    <div id="mpPayList" class="pay-list" style="margin-bottom:14px"></div>
+    <hr style="border:none;border-top:1px solid var(--border);margin-bottom:14px">
+    <p style="font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">➕ Naya Payment</p>
+    <input type="hidden" id="mp-wid">
+    <div class="fr">
+      <div class="fg"><label>Amount (₹) *</label><input class="inp" id="mp-amount" type="number" min="1" placeholder="e.g. 5000"></div>
+      <div class="fg">
+        <label>Payment Type</label>
+        <select class="inp" id="mp-type">
+          <option value="salary">Salary</option>
+          <option value="advance">Advance</option>
+          <option value="bonus">Bonus</option>
+          <option value="deduction">Deduction</option>
+        </select>
+      </div>
+    </div>
+    <div class="fr">
+      <div class="fg">
+        <label>Mode</label>
+        <select class="inp" id="mp-mode">
+          <option value="cash">Cash</option>
+          <option value="upi">UPI</option>
+          <option value="bank">Bank Transfer</option>
+          <option value="cheque">Cheque</option>
+        </select>
+      </div>
+      <div class="fg"><label>Date</label><input class="inp" id="mp-date" type="date"></div>
+    </div>
+    <div class="fg"><label>Notes</label><input class="inp" id="mp-notes" placeholder="Optional"></div>
+    <div class="err-msg" id="mp-err"></div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn-cancel" onclick="closeModal('modalPay')">Cancel</button>
+    <button class="btn-save" onclick="savePayment()">✔ Save Payment</button>
+  </div>
+</div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════ */
+let DATA   = [];          // workers with all nested data
+let saving = {};          // {wid_day: true} — debounce tracker
+
+const CYCLE     = ['', 'P', 'A', 'H', 'HD'];
+const DAY_VAL   = {'P':1,'A':0,'H':.5,'HD':1,'':0};
+const SV_LABELS = {P:'Present ✅',A:'Absent ❌',H:'Half Day 🌓',HD:'Holiday 🏖️'};
+const MONTHS    = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+/* ══════════════════════════════════════════════════
+   INIT — set current month/year
+══════════════════════════════════════════════════ */
+(function(){
+  const n = new Date();
+  document.getElementById('selMonth').value = String(n.getMonth()+1).padStart(2,'0');
+  document.getElementById('selYear').value  = n.getFullYear();
+  document.getElementById('mw-jdate').value = n.toISOString().slice(0,10);
+  document.getElementById('mp-date').value  = n.toISOString().slice(0,10);
+})();
+
+function MY(){ return `${document.getElementById('selYear').value}-${document.getElementById('selMonth').value}` }
+function daysInMY(){
+  const [y,m] = MY().split('-').map(Number);
+  return new Date(y,m,0).getDate();
+}
+function isSun(day){
+  const [y,m] = MY().split('-').map(Number);
+  return new Date(y,m-1,day).getDay()===0;
+}
+
+/* ══════════════════════════════════════════════════
+   API
+══════════════════════════════════════════════════ */
+async function api(url, method='GET', body=null){
+  const opts = { method, headers:{'Content-Type':'application/json'} };
+  if(body) opts.body = JSON.stringify(body);
+  const r = await fetch(url, opts);
+  const j = await r.json();
+  if(!r.ok) throw new Error(j.error || `HTTP ${r.status}`);
+  return j;
+}
+
+/* ══════════════════════════════════════════════════
+   LOAD ALL
+══════════════════════════════════════════════════ */
+async function loadAll(showMsg=false){
+  showLoading();
+  try {
+    const [reg, stats] = await Promise.all([
+      api(`/api/register/${MY()}`),
+      api(`/api/stats/${MY()}`)
+    ]);
+    DATA = reg;
+    renderStats(stats);
+    renderMonthsBar(stats.active_months||[]);
+    renderTable();
+    if(showMsg) toast('Data reload ho gaya! 🔄','info');
+  } catch(e) {
+    showEmpty('⚠️ Server se data nahi mila. Flask app start hai? <br><code style="color:var(--orange)">python app.py</code>');
+    toast('Server connect nahi hua!','err');
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   MONTHS BAR
+══════════════════════════════════════════════════ */
+function renderMonthsBar(months){
+  const bar = document.getElementById('monthsBar');
+  if(!months.length){ bar.innerHTML='<span style="font-size:11px;color:var(--muted)">Koi data nahi — pehla worker add karo</span>'; return; }
+  bar.innerHTML = months.map(my=>{
+    const [y,m] = my.split('-');
+    const label = `${MONTHS[+m]} ${y}`;
+    const active = my===MY() ? 'active' : '';
+    return `<span class="month-chip ${active}" onclick="jumpToMonth('${my}')">${label}</span>`;
+  }).join('');
+}
+
+function jumpToMonth(my){
+  const [y,m] = my.split('-');
+  document.getElementById('selYear').value  = y;
+  document.getElementById('selMonth').value = m;
+  loadAll();
+}
+
+/* ══════════════════════════════════════════════════
+   STATS
+══════════════════════════════════════════════════ */
+function renderStats(s){
+  anim('st-w', s.total_workers, '');
+  anim('st-p', s.present_today, '');
+  anim('st-m', s.monthly_pay,   '₹');
+  anim('st-e', s.extra_total,   '₹');
+  anim('st-b', s.balance_due,   '₹');
+  anim('st-t', s.current_total, '₹');
+}
+
+function anim(id, target, pfx){
+  const el=document.getElementById(id), dur=650, t0=performance.now();
+  const go=now=>{
+    const p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,3);
+    el.textContent=pfx+Math.round(e*target).toLocaleString('en-IN');
+    if(p<1) requestAnimationFrame(go);
+  };
+  requestAnimationFrame(go);
+}
+
+/* ══════════════════════════════════════════════════
+   RENDER TABLE
+══════════════════════════════════════════════════ */
+function renderTable(){
+  const days = daysInMY();
+  const q    = document.getElementById('srchInput').value.toLowerCase();
+  const list = DATA.filter(w=>
+    w.full_name.toLowerCase().includes(q) ||
+    w.mobile_number.includes(q) ||
+    w.role.includes(q)
+  );
+  document.getElementById('wBadge').textContent = list.length+' Workers';
+
+  /* --- thead --- */
+  let th = `<th class="stk stk-0">#</th>
+             <th class="th-name stk stk-1">Name &amp; Details</th>
+             <th>Rate/Day</th>`;
+  for(let d=1;d<=31;d++){
+    const hide = d>days ? ' style="display:none"' : '';
+    const sun  = isSun(d) ? ' th-sun' : '';
+    th += `<th class="th-day${sun}"${hide}>${d}</th>`;
+  }
+  th += `<th>Days</th><th>Monthly</th><th>Extra</th><th>Current</th><th>Balance</th><th>Actions</th>`;
+  document.getElementById('theadRow').innerHTML = th;
+
+  /* --- tbody --- */
+  if(!list.length){
+    showEmpty(q
+      ? `🔍 "${q}" se koi worker nahi mila`
+      : '👷 Koi worker nahi hai. <strong>+ Add Worker</strong> se naya worker daalo.');
+    buildFoot(0,0,0);
+    return;
+  }
+
+  let sD=0, sM=0, sE=0;
+  let rows = '';
+
+  list.forEach((w,i)=>{
+    const att  = w.attendance || {};
+    const exts = w.extra_money || [];
+
+    let td=0;
+    for(let d=1;d<=days;d++) td += DAY_VAL[att[String(d)]||'']||0;
+
+    const monthly = Math.round(td * w.daily_rate);
+    const extra   = exts.reduce((s,e)=>s+e.amount,0);
+    const current = monthly + extra;
+    const balance = Math.max(0, current - (w.paid_total||0));
+    sD+=td; sM+=monthly; sE+=extra;
+
+    /* day cells */
+    let dcs='';
+    for(let d=1;d<=31;d++){
+      if(d>days){ dcs+=`<td style="display:none"></td>`; continue; }
+      const st  = att[String(d)]||'';
+      const sun = isSun(d)?' sun':'';
+      dcs+=`<td><div class="dc s-${st||'0'}${sun}" data-wid="${w.id}" data-day="${d}" data-tip="Day ${d}${sun?' ☀️':''}" onclick="toggleDay(${w.id},${d})">${st}</div></td>`;
+    }
+
+    const init = w.full_name.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+
+    rows += `
+    <tr data-wid="${w.id}">
+      <td class="td-sno stk stk-0">${i+1}</td>
+      <td class="stk stk-1">
+        <div class="wc">
+          <div class="av av-${w.role==='mistri'?'m':'l'}">${init}</div>
+          <div>
+            <div class="wname" title="${w.full_name}">${w.full_name}</div>
+            <span class="wtag tag-${w.role==='mistri'?'m':'l'}">${w.role==='mistri'?'👷 Mistri':'🧱 Labour'}</span>
+          </div>
+        </div>
+      </td>
+      <td><div class="td-rate">₹${Number(w.daily_rate).toLocaleString('en-IN')}</div></td>
+      ${dcs}
+      <td><div class="td-total glow" id="tc-${w.id}">${td}</div></td>
+      <td><div class="td-monthly" id="mc-${w.id}">₹${monthly.toLocaleString('en-IN')}</div></td>
+      <td><div class="td-extra">
+        <div class="extra-inner">
+          <div class="extra-amt" id="ec-${w.id}">₹${extra.toLocaleString('en-IN')}</div>
+          <button class="btn btn-sm btn-blue" onclick="openExtraModal(${w.id})">📋 Details</button>
+        </div>
+      </div></td>
+      <td><div class="td-current">
+        <div class="curr-inner">
+          <div class="curr-amt" id="cc-${w.id}">₹${current.toLocaleString('en-IN')}</div>
+          <div class="curr-sub" id="cs-${w.id}">${td}d + extras</div>
+        </div>
+      </div></td>
+      <td><div class="td-balance">
+        <div class="${balance>0?'bal-pos':'bal-zero'}" id="bc-${w.id}">₹${balance.toLocaleString('en-IN')}</div>
+      </div></td>
+      <td><div class="act-cell">
+        <button class="act-btn" title="Payment" onclick="openPayModal(${w.id})">💸</button>
+        <button class="act-btn" title="Edit" onclick="openEditWorkerModal(${w.id})">✏️</button>
+        <button class="act-btn del" title="Delete" onclick="deleteWorker(${w.id})">🗑️</button>
+      </div></td>
+    </tr>`;
+  });
+
+  document.getElementById('tbody').innerHTML = rows;
+  buildFoot(sD, sM, sE);
+}
+
+function buildFoot(sD,sM,sE){
+  const days=daysInMY();
+  document.getElementById('tfootRow').innerHTML =`
+    <td colspan="3" class="tf-lbl stk stk-0">📊 TOTAL</td>
+    <td colspan="${days}" ></td>
+    <td style="color:var(--green)">${sD}</td>
+    <td style="color:var(--gold)">₹${sM.toLocaleString('en-IN')}</td>
+    <td style="color:var(--blue)">₹${sE.toLocaleString('en-IN')}</td>
+    <td style="color:var(--orange)">₹${(sM+sE).toLocaleString('en-IN')}</td>
+    <td></td><td></td>
+    <td colspan="${31-days}"></td>`;
+}
+
+function showLoading(){
+  document.getElementById('tbody').innerHTML =
+    `<tr><td colspan="42" class="special-row"><div class="spinner"></div>Data load ho raha hai…</td></tr>`;
+}
+function showEmpty(msg){
+  document.getElementById('tbody').innerHTML =
+    `<tr><td colspan="42" class="special-row">${msg}</td></tr>`;
+}
+
+/* ══════════════════════════════════════════════════
+   TOGGLE ATTENDANCE
+══════════════════════════════════════════════════ */
+async function toggleDay(wid, day){
+  const w = DATA.find(x=>x.id===wid);
+  if(!w) return;
+  if(!w.attendance) w.attendance={};
+
+  const cur  = w.attendance[String(day)]||'';
+  const next = CYCLE[(CYCLE.indexOf(cur)+1)%CYCLE.length];
+
+  // optimistic UI
+  if(next) w.attendance[String(day)]=next; else delete w.attendance[String(day)];
+  updateDayCell(wid,day,next);
+  recalcRow(wid);
+
+  // debounce save
+  const key = `${wid}_${day}`;
+  if(saving[key]) return;
+  saving[key]=true;
+
+  try {
+    await api('/api/attendance','POST',{
+      worker_id:wid, day, month_year:MY(), status:next
+    });
+    toast(next ? `Day ${day}: ${SV_LABELS[next]}` : `Day ${day}: Clear ho gaya`, 'info');
+    refreshStats();
+  } catch(e){
+    toast('Save nahi hua: '+e.message,'err');
+  } finally {
+    delete saving[key];
+  }
+}
+
+function updateDayCell(wid,day,status){
+  const el = document.querySelector(`.dc[data-wid="${wid}"][data-day="${day}"]`);
+  if(!el) return;
+  const sun = isSun(day)?' sun':'';
+  el.className = `dc s-${status||'0'}${sun}`;
+  el.textContent = status;
+}
+
+function recalcRow(wid){
+  const w=DATA.find(x=>x.id===wid); if(!w) return;
+  const days=daysInMY();
+  let td=0;
+  for(let d=1;d<=days;d++) td+=DAY_VAL[w.attendance?.[String(d)]||'']||0;
+  const monthly = Math.round(td*w.daily_rate);
+  const extra   = (w.extra_money||[]).reduce((s,e)=>s+e.amount,0);
+  const current = monthly+extra;
+  const balance = Math.max(0,current-(w.paid_total||0));
+  const set=(id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=v };
+  set(`tc-${wid}`,td);
+  set(`mc-${wid}`,'₹'+monthly.toLocaleString('en-IN'));
+  set(`ec-${wid}`,'₹'+extra.toLocaleString('en-IN'));
+  set(`cc-${wid}`,'₹'+current.toLocaleString('en-IN'));
+  set(`cs-${wid}`,`${td}d + extras`);
+  const bc=document.getElementById(`bc-${wid}`);
+  if(bc){ bc.textContent='₹'+balance.toLocaleString('en-IN'); bc.className=balance>0?'bal-pos':'bal-zero'; }
+  // rebuild foot
+  let sD=0,sM=0,sE=0;
+  DATA.forEach(w2=>{
+    let t=0; for(let d=1;d<=days;d++) t+=DAY_VAL[w2.attendance?.[String(d)]||'']||0;
+    sD+=t; sM+=Math.round(t*w2.daily_rate); sE+=(w2.extra_money||[]).reduce((s,e)=>s+e.amount,0);
+  });
+  buildFoot(sD,sM,sE);
+}
+
+async function refreshStats(){
+  try{ const s=await api(`/api/stats/${MY()}`); renderStats(s); renderMonthsBar(s.active_months||[]); }catch(e){}
+}
+
+/* ══════════════════════════════════════════════════
+   ADD / EDIT WORKER
+══════════════════════════════════════════════════ */
+function openAddWorkerModal(){
+  document.getElementById('mwTitle').textContent = 'Add New Worker';
+  document.getElementById('mw-id').value = '';
+  document.getElementById('mw-err').textContent = '';
+  ['mw-name','mw-mob','mw-addr','mw-aadhar'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mw-role').value  = 'labour';
+  document.getElementById('mw-rate').value  = '';
+  document.getElementById('mw-jdate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('mw-save-btn').textContent = '✔ Save Worker';
+  openModal('modalWorker');
+  setTimeout(()=>document.getElementById('mw-name').focus(),200);
+}
+
+function openEditWorkerModal(wid){
+  const w = DATA.find(x=>x.id===wid); if(!w) return;
+  document.getElementById('mwTitle').textContent      = 'Edit Worker';
+  document.getElementById('mw-id').value              = wid;
+  document.getElementById('mw-name').value            = w.full_name;
+  document.getElementById('mw-mob').value             = w.mobile_number;
+  document.getElementById('mw-role').value            = w.role;
+  document.getElementById('mw-rate').value            = w.daily_rate;
+  document.getElementById('mw-jdate').value           = w.joining_date||'';
+  document.getElementById('mw-aadhar').value          = w.aadhar_number||'';
+  document.getElementById('mw-addr').value            = w.address||'';
+  document.getElementById('mw-err').textContent       = '';
+  document.getElementById('mw-save-btn').textContent  = '✔ Update Worker';
+  openModal('modalWorker');
+}
+
+async function saveWorker(){
+  const wid  = document.getElementById('mw-id').value;
+  const body = {
+    full_name:     document.getElementById('mw-name').value.trim(),
+    mobile_number: document.getElementById('mw-mob').value.trim(),
+    role:          document.getElementById('mw-role').value,
+    daily_rate:    document.getElementById('mw-rate').value,
+    joining_date:  document.getElementById('mw-jdate').value,
+    aadhar_number: document.getElementById('mw-aadhar').value.trim(),
+    address:       document.getElementById('mw-addr').value.trim(),
+  };
+  document.getElementById('mw-err').textContent='';
+  try {
+    if(wid){
+      await api(`/api/workers/${wid}`,'PUT',body);
+      toast(`Worker update ho gaya! ✅`,'ok');
+    } else {
+      await api('/api/workers','POST',body);
+      toast(`"${body.full_name}" add ho gaya! 🎉`,'ok');
+    }
+    closeModal('modalWorker');
+    loadAll();
+  } catch(e){
+    document.getElementById('mw-err').textContent = e.message;
+    toast(e.message,'err');
+  }
+}
+
+async function deleteWorker(wid){
+  const w=DATA.find(x=>x.id===wid);
+  if(!confirm(`"${w?.full_name}" ko delete karein?\n\nYeh action UNDO nahi ho sakti!\nSari attendance aur payment bhi delete ho jayegi.`)) return;
+  try {
+    const r=await api(`/api/workers/${wid}`,'DELETE');
+    toast(r.message||'Worker delete ho gaya','info');
+    loadAll();
+  } catch(e){ toast(e.message,'err'); }
+}
+
+/* ══════════════════════════════════════════════════
+   EXTRA MONEY MODAL
+══════════════════════════════════════════════════ */
+async function openExtraModal(wid){
+  const w=DATA.find(x=>x.id===wid); if(!w) return;
+  document.getElementById('meTitle').textContent=`Extra Money — ${w.full_name}`;
+  renderExtraBody(wid);
+  openModal('modalExtra');
+}
+
+function renderExtraBody(wid){
+  const w=DATA.find(x=>x.id===wid); if(!w) return;
+  const exts=w.extra_money||[];
+  const cards=exts.length
+    ? exts.map(e=>`
+        <div class="ee-card">
+          <div class="ee-mo">📅 ${e.month_label}</div>
+          <div class="ee-am">₹${Number(e.amount).toLocaleString('en-IN')}</div>
+          <div class="ee-note">${e.reason||'—'}</div>
+          <button class="ee-del" onclick="deleteExtra(${e.id},${wid})" title="Delete">✕</button>
+        </div>`).join('')
+    : '<p style="color:var(--muted);font-size:13px">Koi extra entry nahi hai abhi.</p>';
+
+  document.getElementById('meBody').innerHTML=`
+    <div class="ee-list">${cards}</div>
+    <div class="ee-add-form">
+      <input class="ee-inp w-mo" id="ee-mon" placeholder="Nov 2024">
+      <input class="ee-inp w-am" id="ee-amt" type="number" min="1" placeholder="Amount ₹">
+      <input class="ee-inp w-no" id="ee-rsn" placeholder="Reason (optional)">
+      <button class="btn-ee" onclick="addExtra(${wid})">＋ Add</button>
+    </div>`;
+  setTimeout(()=>document.getElementById('ee-mon').focus(),200);
+}
+
+async function addExtra(wid){
+  const label  = document.getElementById('ee-mon').value.trim();
+  const amount = parseFloat(document.getElementById('ee-amt').value)||0;
+  const reason = document.getElementById('ee-rsn').value.trim();
+  if(!label||amount<=0){ toast('Month aur amount dono zaroori hain!','warn'); return; }
+  try {
+    const r=await api('/api/extra_money','POST',{worker_id:wid,month_label:label,amount,reason});
+    const w=DATA.find(x=>x.id===wid);
+    if(w) w.extra_money=[...(w.extra_money||[]),r.entry];
+    renderExtraBody(wid);
+    recalcRow(wid);
+    refreshStats();
+    toast(`₹${amount} extra add ho gaya! ✅`,'ok');
+  } catch(e){ toast(e.message,'err'); }
+}
+
+async function deleteExtra(eid,wid){
+  if(!confirm('Is entry ko delete karein?')) return;
+  try {
+    await api(`/api/extra_money/${eid}`,'DELETE');
+    const w=DATA.find(x=>x.id===wid);
+    if(w) w.extra_money=w.extra_money.filter(e=>e.id!==eid);
+    renderExtraBody(wid);
+    recalcRow(wid);
+    refreshStats();
+    toast('Entry delete ho gayi','info');
+  } catch(e){ toast(e.message,'err'); }
+}
+
+/* ══════════════════════════════════════════════════
+   PAYMENT MODAL
+══════════════════════════════════════════════════ */
+async function openPayModal(wid){
+  const w=DATA.find(x=>x.id===wid); if(!w) return;
+  document.getElementById('mpTitle').textContent=`Payment — ${w.full_name}`;
+  document.getElementById('mp-wid').value=wid;
+  document.getElementById('mp-amount').value='';
+  document.getElementById('mp-notes').value='';
+  document.getElementById('mp-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('mp-err').textContent='';
+  // load existing payments
+  try {
+    const pays=await api(`/api/payments?worker_id=${wid}&month_year=${MY()}`);
+    const list=document.getElementById('mpPayList');
+    list.innerHTML=pays.length
+      ? pays.map(p=>`
+          <div class="pay-item">
+            <div class="pay-info">
+              <div class="pay-type">${p.payment_type} · ${p.payment_mode}</div>
+              <div class="pay-note">${p.notes||'—'}</div>
+              <div class="pay-date">${p.payment_date}</div>
+            </div>
+            <div class="pay-amount">₹${Number(p.amount).toLocaleString('en-IN')}</div>
+          </div>`).join('')
+      : '<p style="color:var(--muted);font-size:13px">Is mahine koi payment nahi ki abhi.</p>';
+  } catch(e){}
+  openModal('modalPay');
+}
+
+async function savePayment(){
+  const wid    = document.getElementById('mp-wid').value;
+  const amount = parseFloat(document.getElementById('mp-amount').value)||0;
+  document.getElementById('mp-err').textContent='';
+  if(!amount||amount<=0){ document.getElementById('mp-err').textContent='Amount valid hona chahiye'; return; }
+  try {
+    await api('/api/payments','POST',{
+      worker_id:    wid,
+      month_year:   MY(),
+      amount,
+      payment_type: document.getElementById('mp-type').value,
+      payment_mode: document.getElementById('mp-mode').value,
+      payment_date: document.getElementById('mp-date').value,
+      notes:        document.getElementById('mp-notes').value.trim(),
+    });
+    toast(`₹${amount} payment save ho gayi! 💸`,'ok');
+    closeModal('modalPay');
+    loadAll();
+  } catch(e){
+    document.getElementById('mp-err').textContent=e.message;
+    toast(e.message,'err');
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   EXPORT CSV
+══════════════════════════════════════════════════ */
+function exportCSV(){
+  const days=daysInMY(), my=MY();
+  let csv=`S.No,Name,Role,Mobile,Daily Rate (Rs),`;
+  for(let d=1;d<=days;d++) csv+=`Day ${d},`;
+  csv+=`Total Days,Monthly Pay (Rs),Extra Money (Rs),Current Income (Rs),Balance Due (Rs)\n`;
+  DATA.forEach((w,i)=>{
+    let td=0, dv='';
+    for(let d=1;d<=days;d++){
+      const st=w.attendance?.[String(d)]||'-'; dv+=st+',';
+      td+=DAY_VAL[st]||0;
+    }
+    const monthly=Math.round(td*w.daily_rate);
+    const extra=(w.extra_money||[]).reduce((s,e)=>s+e.amount,0);
+    const current=monthly+extra;
+    const bal=Math.max(0,current-(w.paid_total||0));
+    csv+=`${i+1},"${w.full_name}",${w.role},${w.mobile_number},${w.daily_rate},${dv}${td},${monthly},${extra},${current},${bal}\n`;
+  });
+  const a=Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(new Blob([csv],{type:'text/csv'})),
+    download:`Contractor_Register_${my}.csv`
+  });
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('CSV export ho gaya! 📥','ok');
+}
+
+/* ══════════════════════════════════════════════════
+   MODAL HELPERS
+══════════════════════════════════════════════════ */
+function openModal(id) { document.getElementById(id).classList.add('open') }
+function closeModal(id){ document.getElementById(id).classList.remove('open') }
+document.querySelectorAll('.overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('open') });
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(el=>el.classList.remove('open'));
+});
+// Enter key in worker modal
+['mw-name','mw-mob','mw-rate','mw-addr','mw-aadhar'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el) el.addEventListener('keydown',e=>{ if(e.key==='Enter') saveWorker(); });
+});
+
+/* ══════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════ */
+const TICONS={ok:'✅',info:'ℹ️',warn:'⚠️',err:'❌'};
+function toast(msg,type='info'){
+  const w=document.getElementById('toastsWrap');
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<span class="ti">${TICONS[type]||'ℹ️'}</span><span>${msg}</span>`;
+  w.appendChild(el);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));
+  setTimeout(()=>{ el.classList.remove('show'); setTimeout(()=>el.remove(),400); },3000);
+}
+
+/* ══════════════════════════════════════════════════
+   CANVAS BACKGROUND
+══════════════════════════════════════════════════ */
+(function(){
+  const c=document.getElementById('bg'), ctx=c.getContext('2d');
+  let W,H,pts=[];
+  const resize=()=>{ W=c.width=window.innerWidth; H=c.height=window.innerHeight; };
+  resize(); window.addEventListener('resize',resize);
+  function Pt(){ this.x=Math.random()*W; this.y=Math.random()*H;
+    this.vx=(Math.random()-.5)*.4; this.vy=(Math.random()-.5)*.4;
+    this.r=Math.random()*1.7+.3; this.a=Math.random()*.3+.08;
+    this.col=Math.random()<.55?'#FF6B35':'#FFD060'; }
+  Pt.prototype.tick=function(){ this.x+=this.vx; this.y+=this.vy;
+    if(this.x<0||this.x>W||this.y<0||this.y>H){ this.x=Math.random()*W; this.y=Math.random()*H; } };
+  for(let i=0;i<65;i++) pts.push(new Pt());
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<88){ ctx.globalAlpha=(1-d/88)*.09; ctx.strokeStyle='#FF6B35'; ctx.lineWidth=.5;
+        ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); }
+    }
+    pts.forEach(p=>{ p.tick(); ctx.globalAlpha=p.a; ctx.fillStyle=p.col;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); });
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══════════════════════════════════════════════════
+   EVENTS & INIT
+══════════════════════════════════════════════════ */
+document.getElementById('srchInput').addEventListener('input',()=>renderTable());
+document.getElementById('selMonth').addEventListener('change',()=>loadAll());
+document.getElementById('selYear').addEventListener('change', ()=>loadAll());
+
+// start
+loadAll();
+</script>
+</body>
+</html>
